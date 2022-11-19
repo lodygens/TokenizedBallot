@@ -6,7 +6,7 @@ interface IMyToken {
 
 }
 
-contract Ballot {
+contract TokenizedBallot {
  
     struct Proposal {
         bytes32 name;
