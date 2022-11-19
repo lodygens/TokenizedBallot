@@ -21,30 +21,44 @@ async function main() {
     const [minter, voter, other] = accounts;
     const contractFactory = new MyToken__factory(minter);
     const contract = await contractFactory.deploy() as MyToken;
+
     await contract.deployed();
     console.log(`Contract deployed at ${contract.address}`);
+
     let voterTokenBalance = await contract.balanceOf(voter.address);
     console.log(`Before mint voterTokenBalance = ${voterTokenBalance}`);
+
     const mintTx = await contract.mint(voter.address, TEST_MINT_VALUE);
     await mintTx.wait();
     voterTokenBalance = await contract.balanceOf(voter.address);
     console.log(`After mint voterTokenBalance = ${voterTokenBalance}`);
+
     let votePower =  await contract.getVotes(voter.address);
     console.log(`After mint votePower = ${votePower}`);
+
     let delegateTx = await contract.connect(voter).delegate(voter.address);
     await delegateTx.wait();
     votePower =  await contract.getVotes(voter.address);
     console.log(`After delegating votePower = ${votePower}`);
+
     const transferTx = await contract.connect(voter).transfer(other.address, TEST_MINT_VALUE.div(2));
     await transferTx.wait();
     votePower =  await contract.getVotes(voter.address);
     console.log(`After transfer votePower = ${votePower}`);
+
     votePower =  await contract.getVotes(other.address);
     console.log(`After transfer other votePower = ${votePower}`);
     delegateTx = await contract.connect(other).delegate(other.address);
+
     await delegateTx.wait();
     votePower =  await contract.getVotes(other.address);
     console.log(`After transfer and delegate other votePower = ${votePower}`);
+
+    const currentBlock = await ethers.provider.getBlock("latest");
+    for(let blockNumber = currentBlock.number - 1; blockNumber > 0 ; blockNumber--) {
+        const pastVotePower = await contract.getPastVotes(voter.address, blockNumber);
+        console.log(`At block ${blockNumber} votePower was = ${pastVotePower}`);
+    }
 }
 
 
