@@ -267,7 +267,7 @@ async function vote(tokenizedBallotContractAddress: string, proposal : string) {
   const tx = await ballotContract.vote(proposal, 5);
   const receipt = await tx.wait();
 
-  console.log("Vote Tx hash " + receipt.transactionHash);
+  console.log("[VOTE] : Vote Tx hash " + receipt.transactionHash);
 }
 /**
  * This calls Ballot.winnerName()
