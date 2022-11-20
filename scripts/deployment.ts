@@ -4,8 +4,24 @@ import { ethers } from "hardhat";
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 
 dotenv.config()
-const TEST_MINT_VALUE = ethers.utils.parseEther("10");
 
+/**
+ * Some constants
+ */
+ const CMD_DEPLOY = "deploy";
+ const CMD_GIVERIGHTTOVOTE = "giveRightToVote";
+ const CMD_DELEGATEVOTE = "delegate";
+ const CMD_VOTE = "vote";
+ const CMD_WINNER = "winner";
+ const CMD_PROPOSALS = "proposals";
+ const BLOCK_NUMBER = 10;
+ const TEST_MINT_VALUE = ethers.utils.parseEther("10");
+
+
+/**
+ * This is note used; this is the example during the session with Matheus
+ * This is kept here as reference
+ */
 async function session() {
   /*
       const provider = new ethers.providers.InfuraProvider("goerli", process.env.INFURA_API_KEY);
@@ -61,22 +77,15 @@ async function session() {
   }
 }
 
-const CMD_DEPLOY = "deploy";
-const CMD_GIVERIGHTTOVOTE = "giveRightToVote";
-const CMD_DELEGATEVOTE = "delegate";
-const CMD_VOTE = "vote";
-const CMD_WINNER = "winner";
-const CMD_PROPOSALS = "proposals";
 
 /**
  * This is the main function.
  * This parses command line and call the according functions as follow
  *   $0 deploy : this deploys
- *           to deploy Token Smart Contact
- *           to deploy TokenizedBallot Smart Contact
+ *           to deploy Token Smart Contact and TokenizedBallot Smart Contact
  *   $0 proposals contractAddr  : this shows proposals
  *           contractAddr is the tokenizedBallotSmartContractAddress
-*   $0 giveRightToVote contractAddr voterWallet : 
+ *   $0 giveRightToVote contractAddr voterWallet : 
  *           contractAddr is the tokenContractAddress
  *           voterWallet is the wallet to give right to vote to
  *   $0 delegate contractAddr delegatedWallet : this delegate vote
@@ -92,9 +101,14 @@ const CMD_PROPOSALS = "proposals";
  */
 async function main() {
   const args = process.argv;
-  // console.log(args);
+
+  if (args.length < 3) {
+    console.error("[MAIN][ERROR] : not enough arguments")
+    process.exit();
+  }
+
   const commandLineCmd = args[2];
-  //console.log(commandLineCmd);
+
   if (commandLineCmd.localeCompare(CMD_DEPLOY) == 0) {
     deploy();
   }
@@ -116,7 +130,7 @@ async function main() {
 }
 
 /**
- * This converts a string to a byte32 array
+ * This converts a string array to a byte32 array
  * @param array 
  * @returns a bytes32 array
  */
@@ -129,9 +143,17 @@ function convertStringArrayToBytes32(array: string[]) {
 }
 
 /**
- * This deploy the MyToken Smart Contract
+ * This deploys the MyToken and Tokenized smart contracts
+ * Command line arguments must be as follow
+ *   - args[3:] contain proposals as strings array
  */
 async function deploy() {
+
+  if (process.argv.length < 4) {
+    console.error("[DEPLOY][ERROR] : not enough arguments")
+    process.exit();
+  }
+
   const provider = new ethers.providers.InfuraProvider("goerli", process.env.INFURA_API_KEY);
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? "");
   const signer = wallet.connect(provider);
@@ -151,18 +173,29 @@ async function deploy() {
   console.log(`[DEPLOY] : MyToken deployed at ${tokenContract.address}`);
 
   const tokenizedBallotFactory = new TokenizedBallot__factory(signer);
-  const tokenizedBallotContrat = await tokenizedBallotFactory.deploy(proposals, tokenContract.address, 10) as TokenizedBallot;
+  const tokenizedBallotContrat = await tokenizedBallotFactory.deploy(
+    convertStringArrayToBytes32(proposals),
+    tokenContract.address,
+    BLOCK_NUMBER
+  ) as TokenizedBallot;
+
   await tokenizedBallotContrat.deployed();
   console.log(`[DEPLOY] : TokenizedBallot deployed at ${tokenizedBallotContrat.address}`);
 
 }
 
 /**
- * This calls Ballot.proposals()
+ * This dumps all proposals
  * Command line arguments must be as follow
  *   - args[3] contains tokenizedBallotSmartContractAddress
  */
 async function proposals() {
+
+  if (process.argv.length < 4) {
+    console.error("[PROPOSALS][ERROR] : not enough arguments")
+    process.exit();
+  }
+
   const provider = new ethers.providers.InfuraProvider("goerli", process.env.INFURA_API_KEY);
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? "");
   const signer = wallet.connect(provider);
@@ -178,7 +211,7 @@ async function proposals() {
   for (let i = 0; i < 100; i++) {
     try {
       const proposal = await ballotContract.proposals(i);
-      console.log("proposal[" + i + "] = { \"" + ethers.utils.parseBytes32String(proposal.name) + "\", " + proposal.voteCount + "}");
+      console.log("    proposal[" + i + "] = { \"" + ethers.utils.parseBytes32String(proposal.name) + "\", " + proposal.voteCount + "}");
     } catch (e) {
       i = 100;
     }
@@ -186,12 +219,18 @@ async function proposals() {
 }
 
 /**
- * This calls Ballot.giveRightToVote
+ * This mints voting token
  * Command line arguments must be as follow
  *   - args[3] contains tokenContractAddress
  *   - args[4] contains voterWallet
  */
 async function giveRightToVote() {
+
+  if (process.argv.length < 5) {
+    console.error("[GIVERIGHTTOVOTE][ERROR] : not enough arguments")
+    process.exit();
+  }
+
   const provider = new ethers.providers.InfuraProvider("goerli", process.env.INFURA_API_KEY);
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? "");
   const signer = wallet.connect(provider);
@@ -200,7 +239,7 @@ async function giveRightToVote() {
   const contractAddress = args[3];
   const voterWallet = args[4];
 
-  console.log("[GIVERIGHTTOVOTE] : tokenizedBallot.attach(" + contractAddress + ")");
+  console.log("[GIVERIGHTTOVOTE] : token.attach(" + contractAddress + ")");
   const tokenFactory = new MyToken__factory(signer);
   let tokenContract = tokenFactory.attach(contractAddress);
 
@@ -217,12 +256,18 @@ async function giveRightToVote() {
 }
 
 /**
- * This calls Ballot.giveRightToVote
+ * This delegates vote power
  * Command line arguments must be as follow
  *   - args[3] contains tokenContractAddress
  *   - args[4] contains voterWallet
  */
 async function delegate() {
+
+  if (process.argv.length < 5) {
+    console.error("[DELEGATE][ERROR] : not enough arguments")
+    process.exit();
+  }
+
   const provider = new ethers.providers.InfuraProvider("goerli", process.env.INFURA_API_KEY);
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? "");
   const signer = wallet.connect(provider);
@@ -254,6 +299,12 @@ async function delegate() {
  * .env.PRIVATE_KEY must contains the caller wallet private key
  */
 async function vote() {
+
+  if (process.argv.length < 5) {
+    console.error("[VOTE][ERROR] : not enough arguments")
+    process.exit();
+  }
+
   const provider = new ethers.providers.InfuraProvider("goerli", process.env.INFURA_API_KEY);
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? "");
   const signer = wallet.connect(provider);
@@ -262,12 +313,12 @@ async function vote() {
   const contractAddress = args[3];
   const proposal = args[4];
 
-  console.log("ballot.attach(" + contractAddress + ")");
-  console.log("ballot.vote(" + proposal + ")");
+  console.log("[VOTE] ballot.attach(" + contractAddress + ")");
+  console.log("[VOTE] ballot.vote(" + proposal + ")");
 
   const ballotFactory = new TokenizedBallot__factory(signer);
   let ballotContract = await ballotFactory.attach(contractAddress);
-  const tx = await ballotContract.vote(proposal);
+  const tx = await ballotContract.vote(proposal, 5);
   const receipt = await tx.wait();
 
   console.log("Vote Tx hash " + receipt.transactionHash);
@@ -279,6 +330,12 @@ async function vote() {
  * .env.PRIVATE_KEY must contains the caller wallet private key
  */
 async function winner() {
+
+  if (process.argv.length < 4) {
+    console.error("[WINNER][ERROR] : not enough arguments")
+    process.exit();
+  }
+
   const provider = new ethers.providers.InfuraProvider("goerli", process.env.INFURA_API_KEY);
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? "");
   const signer = wallet.connect(provider);
