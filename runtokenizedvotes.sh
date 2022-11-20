@@ -86,7 +86,7 @@ echo "Voter3 delegates to itself Tx hash = ${TXHASH}"
 
 # Voter3 votes 'three'
 ln -sf .env.bootcamp3 .env
-yarn run ts-node --files scripts/deployment.ts  vote ${TOKENCONTRACTADDR} 2 2>&1 > ${LOGFILE}
+yarn run ts-node --files scripts/deployment.ts  vote ${TOKENIZEDBALLOTCONTRACTADDR} 2 2>&1 > ${LOGFILE}
 TOGREP="Vote Tx hash"
 grep "${TOGREP}" ${LOGFILE} || $(echo "ERROR : Voter3 votes 'three'" ; exit 1)
 TXHASH=`cat ${LOGFILE} | grep "${TOGREP}" | cut -d ' ' -f 6`
@@ -95,11 +95,11 @@ echo "Voter3 votes 'three' Tx hash = ${TXHASH}"
 # Show proposals
 echo "Proposals : "
 ln -sf .env.bootcamp3 .env
-yarn run ts-node --files scripts/deployment.ts  proposals ${TOKENCONTRACTADDR}
+yarn run ts-node --files scripts/deployment.ts  proposals ${TOKENIZEDBALLOTCONTRACTADDR}
 
 # Voter2 votes 'two'
 ln -sf .env.bootcamp2 .env
-yarn run ts-node --files scripts/deployment.ts  vote ${TOKENCONTRACTADDR} 1 2>&1 > ${LOGFILE}
+yarn run ts-node --files scripts/deployment.ts  vote ${TOKENIZEDBALLOTCONTRACTADDR} 1 2>&1 > ${LOGFILE}
 TOGREP="Vote Tx hash"
 grep "${TOGREP}" ${LOGFILE} || $(echo "ERROR : Voter3 votes 'three'" ; exit 1)
 TXHASH=`cat ${LOGFILE} | grep "${TOGREP}" | cut -d ' ' -f 6`
@@ -108,4 +108,4 @@ echo "Voter2 votes 'two' Tx hash = ${TXHASH}"
 # Show proposals
 echo "Proposals : "
 ln -sf .env.bootcamp2 .env
-yarn run ts-node --files scripts/deployment.ts  proposals ${TOKENCONTRACTADDR}
+yarn run ts-node --files scripts/deployment.ts  proposals ${TOKENIZEDBALLOTCONTRACTADDR}
