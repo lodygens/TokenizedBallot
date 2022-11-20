@@ -25,9 +25,6 @@ if [ -z ${TOKENCONTRACTADDR}  ] ; then
 fi
 echo "Token contract address : ${TOKENCONTRACTADDR}"
 
-exit
-
- 
 TOGREP="TokenizedBallot deployed at"
 TOKENIZEDBALLOTCONTRACTADDR=`cat ${LOGFILE} | grep "${TOGREP}" | cut -d ' ' -f 6`
 if [ -z ${TOKENIZEDBALLOTCONTRACTADDR}  ] ; then
