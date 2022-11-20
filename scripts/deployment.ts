@@ -231,7 +231,7 @@ async function giveRightToVote(tokenContractAddress: string, voterWallet : strin
 /**
  * This delegates vote power
  * @param tokenContractAddress is the address of the token smartcontract
- * @param voterWallet is the voter wallet
+ * @param voterWallet is the voter wallet to delegate to
  */
 async function delegate(tokenContractAddress: string, voterWallet : string) {
 
@@ -240,15 +240,18 @@ async function delegate(tokenContractAddress: string, voterWallet : string) {
   const signer = wallet.connect(provider);
 
   console.log("[DELEGATE] : tokenizedBallot.attach(" + tokenContractAddress + ")");
+  console.log("[DELEGATE] : delegating to " + voterWallet);
+
   const tokenFactory = new MyToken__factory(signer);
   let tokenContract = tokenFactory.attach(tokenContractAddress);
+  let delegateTx = await tokenContract.connect(signer).delegate(voterWallet);
 
-  let delegateTx = await tokenContract.connect(voterWallet).delegate(voterWallet);
   const delegateReceipt = await delegateTx.wait();
   const voterTokenBalance = await tokenContract.balanceOf(voterWallet);
-  console.log(`[DELEGATE] : voterTokenBalance = ${voterTokenBalance}`);
+  console.log(`[DELEGATE] : delegated voterTokenBalance = ${voterTokenBalance}`);
+
   const votePower = await tokenContract.getVotes(voterWallet);
-  console.log(`[DELEGATE] : votePower = ${votePower}`);
+  console.log(`[DELEGATE] : delegated votePower = ${votePower}`);
 
   console.log("[DELEGATE] : Delegate Tx hash " + delegateReceipt.transactionHash);
 }
