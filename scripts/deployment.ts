@@ -2,6 +2,7 @@ import { MyToken, MyToken__factory } from "../typechain-types";
 import { TokenizedBallot, TokenizedBallot__factory } from "../typechain-types";
 import { ethers } from "hardhat";
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+import { Wallet } from "ethers";
 
 dotenv.config()
 
@@ -17,6 +18,10 @@ dotenv.config()
  const BLOCK_NUMBER = 10;
  const TEST_MINT_VALUE = ethers.utils.parseEther("10");
 
+ /**
+  * A global variable
+  */
+let signer : Wallet;
 
 /**
  * This is note used; this is the example during the session with Matheus
@@ -102,6 +107,11 @@ async function session() {
 async function main() {
   const args = process.argv;
 
+ // const provider = new ethers.providers.InfuraProvider("goerli", process.env.INFURA_API_KEY);
+  const provider = new ethers.providers.AlchemyProvider("goerli", process.env.ALCHEMY_API_KEY);
+  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? "");
+  signer = wallet.connect(provider);
+
   if (args.length < 3) {
     console.error("[MAIN][ERROR] : not enough arguments")
     process.exit(1);
@@ -148,9 +158,6 @@ function convertStringArrayToBytes32(array: string[]) {
  */
 async function deploy(proposals: string[]) {
 
-  const provider = new ethers.providers.InfuraProvider("goerli", process.env.INFURA_API_KEY);
-  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? "");
-  const signer = wallet.connect(provider);
   const balance = await signer.getBalance();
 
   if (proposals.length <= 0) throw new Error("Deploy : not enough args");
@@ -181,10 +188,6 @@ async function deploy(proposals: string[]) {
  */
 async function proposals(contractAddress: string) {
 
-  const provider = new ethers.providers.InfuraProvider("goerli", process.env.INFURA_API_KEY);
-  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? "");
-  const signer = wallet.connect(provider);
-
   console.log("[PROPOSALS] : tokenizedBallot.attach(" + contractAddress + ")");
 
   const ballotFactory = new TokenizedBallot__factory(signer);
@@ -208,10 +211,6 @@ async function proposals(contractAddress: string) {
  */
 async function giveRightToVote(tokenContractAddress: string, voterWallet : string) {
 
-  const provider = new ethers.providers.InfuraProvider("goerli", process.env.INFURA_API_KEY);
-  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? "");
-  const signer = wallet.connect(provider);
-
   console.log("[GIVERIGHTTOVOTE] : token.attach(" + tokenContractAddress + ")");
   const tokenFactory = new MyToken__factory(signer);
   let tokenContract = tokenFactory.attach(tokenContractAddress);
@@ -234,10 +233,6 @@ async function giveRightToVote(tokenContractAddress: string, voterWallet : strin
  * @param voterWallet is the voter wallet to delegate to
  */
 async function delegate(tokenContractAddress: string, voterWallet : string) {
-
-  const provider = new ethers.providers.InfuraProvider("goerli", process.env.INFURA_API_KEY);
-  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? "");
-  const signer = wallet.connect(provider);
 
   console.log("[DELEGATE] : tokenizedBallot.attach(" + tokenContractAddress + ")");
   console.log("[DELEGATE] : delegating to " + voterWallet);
@@ -264,10 +259,6 @@ async function delegate(tokenContractAddress: string, voterWallet : string) {
  */
 async function vote(tokenizedBallotContractAddress: string, proposal : string) {
 
-  const provider = new ethers.providers.InfuraProvider("goerli", process.env.INFURA_API_KEY);
-  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? "");
-  const signer = wallet.connect(provider);
-
   console.log("[VOTE] ballot.attach(" + tokenizedBallotContractAddress + ")");
   console.log("[VOTE] ballot.vote(" + proposal + ")");
 
@@ -283,10 +274,6 @@ async function vote(tokenizedBallotContractAddress: string, proposal : string) {
  * @param tokenizedBallotContractAddress is the address of the tokenied ballot smartcontract
  */
 async function winner(tokenizedBallotContractAddress: string) {
-
-  const provider = new ethers.providers.InfuraProvider("goerli", process.env.INFURA_API_KEY);
-  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? "");
-  const signer = wallet.connect(provider);
 
   console.log("ballot.attach(" + tokenizedBallotContractAddress + ")");
   console.log("ballot.winnerName()");
