@@ -3,7 +3,7 @@ pragma solidity >=0.7.0 <0.9.0;
 import "./ERC20Votes.sol";
 
 interface IMyToken {
-
+    function getPastVotes(address account, uint256 targetBlock) external;
 }
 
 contract TokenizedBallot {

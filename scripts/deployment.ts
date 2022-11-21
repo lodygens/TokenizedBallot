@@ -117,6 +117,11 @@ async function main() {
     process.exit(1);
   }
 
+  const balance = await signer.getBalance();
+  const network = await signer.getChainId()
+
+  console.log(`[MAIN] : using address ${signer.address} with balance ${balance.toString()} on network ${network}`);
+
   const commandLineCmd = args[2];
 
   if (commandLineCmd.localeCompare(CMD_DEPLOY) == 0) {
@@ -158,19 +163,41 @@ function convertStringArrayToBytes32(array: string[]) {
  */
 async function deploy(proposals: string[]) {
 
-  const balance = await signer.getBalance();
+  if (proposals.length <= 2) throw new Error("Deploy : not enough proposals");
 
-  if (proposals.length <= 0) throw new Error("Deploy : not enough args");
+  const provider = new ethers.providers.AlchemyProvider("goerli", process.env.ALCHEMY_API_KEY);
+  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? "");
+  signer = wallet.connect(provider);
 
-  console.log(`[DEPLOY] : connected to address ${signer.address} with balance ${balance.toString()}`);
+  const accounts = await ethers.getSigners();
+/*
+  const providerMatheus = new ethers.providers.AlchemyProvider("goerli", process.env.ALCHEMY_API_KEY);
+  const walletMatheus = new ethers.Wallet(process.env.PRIVATE_KEY ?? "");
+  signer = walletMatheus.connect(provider);
 
-  let accounts = await ethers.getSigners();
+  const tokenFactoryMatheus = new MyToken__factory(signer);
+  console.log(`[DEPLOY Matheus] : MyToken__factory(${signer.address})`);
+  const tokenContractMatheus = await tokenFactoryMatheus.deploy() as MyToken;
+  await tokenContractMatheus.deployed();
+  console.log(`[DEPLOY Matheus] : MyToken deployed at ${tokenContractMatheus.address}`);
+
+  const balance2 = await accounts[0].getBalance();
+  const network2 = await accounts[0].getChainId()
+  console.log(`[MAIN] : using address ${accounts[0].address} with balance ${balance2.toString()} on network ${network2}`);
+  const tokenFactory2 = new MyToken__factory(accounts[0]);
+  console.log(`[DEPLOY] : MyToken__factory(${accounts[0].address})`);
+  const tokenContract2 = await tokenFactory2.deploy() as MyToken;
+  await tokenContract2.deployed();
+  console.log(`[DEPLOY] : MyToken deployed 2 at ${tokenContract2.address}`);
+*/
   const tokenFactory = new MyToken__factory(signer);
+  console.log(`[DEPLOY] : tokenFactory(${signer.address})`);
   const tokenContract = await tokenFactory.deploy() as MyToken;
   await tokenContract.deployed();
   console.log(`[DEPLOY] : MyToken deployed at ${tokenContract.address}`);
 
   const tokenizedBallotFactory = new TokenizedBallot__factory(signer);
+  console.log(`[DEPLOY] : TokenizedBallot__factory(${signer.address})`);
   const tokenizedBallotContrat = await tokenizedBallotFactory.deploy(
     convertStringArrayToBytes32(proposals),
     tokenContract.address,
@@ -264,7 +291,7 @@ async function vote(tokenizedBallotContractAddress: string, proposal : string) {
 
   const ballotFactory = new TokenizedBallot__factory(signer);
   let ballotContract = await ballotFactory.attach(tokenizedBallotContractAddress);
-  const tx = await ballotContract.vote(proposal, 5);
+  const tx = await ballotContract.vote(ethers.utils.formatBytes32String(proposal), 5);
   const receipt = await tx.wait();
 
   console.log("[VOTE] : Vote Tx hash " + receipt.transactionHash);

@@ -13,10 +13,10 @@ Ronin Ronin (Discors 0xRonin#9031)
 # Conf
 I have four .enf files; one per personna
 ```
--rw-r--r--    1 mboleg  staff   301B 13 nov 19:43 .env.bootcamp  # chairperson conf
--rw-r--r--    1 mboleg  staff   301B 13 nov 19:44 .env.bootcamp1 # voter1 conf
--rw-r--r--    1 mboleg  staff   301B 13 nov 19:45 .env.bootcamp2 # voter2 conf
--rw-r--r--    1 mboleg  staff   301B 13 nov 19:46 .env.bootcamp3 # voter3 conf
+-rw-r--r--    1 mboleg  staff   301B 13 nov 19:43 .env.bootcamp  : chairperson conf
+-rw-r--r--    1 mboleg  staff   301B 13 nov 19:44 .env.bootcamp1 : voter1 conf
+-rw-r--r--    1 mboleg  staff   301B 13 nov 19:45 .env.bootcamp2 : voter2 conf
+-rw-r--r--    1 mboleg  staff   301B 13 nov 19:46 .env.bootcamp3 : voter3 conf
 ```
 
 
