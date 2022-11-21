@@ -200,7 +200,7 @@ async function deploy(proposals: string[]) {
   const tokenizedBallotFactory = new TokenizedBallot__factory(signer);
   console.log(`[DEPLOY] : TokenizedBallot__factory(${signer.address})`);
 
-  const currentBlock = await ethers.provider.getBlock("latest");
+  const currentBlock = await provider.getBlock("latest");
   voteBlock = currentBlock.number + BLOCK_RELATIVE_NUMBER;
 
   console.log(`[DEPLOY] : lastblock.number = ${currentBlock.number}; voting block.number = ${voteBlock}`);
