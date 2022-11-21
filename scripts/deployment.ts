@@ -15,13 +15,14 @@ dotenv.config()
  const CMD_VOTE = "vote";
  const CMD_WINNER = "winner";
  const CMD_PROPOSALS = "proposals";
- const BLOCK_NUMBER = 10;
+ const BLOCK_RELATIVE_NUMBER = 20; // deployBlock + 20 is the block where all voter must have the vote power
  const TEST_MINT_VALUE = ethers.utils.parseEther("10");
 
  /**
   * A global variable
   */
 let signer : Wallet;
+let voteBlock : number;
 
 /**
  * This is note used; this is the example during the session with Matheus
@@ -198,10 +199,16 @@ async function deploy(proposals: string[]) {
 
   const tokenizedBallotFactory = new TokenizedBallot__factory(signer);
   console.log(`[DEPLOY] : TokenizedBallot__factory(${signer.address})`);
+
+  const currentBlock = await ethers.provider.getBlock("latest");
+  voteBlock = currentBlock.number + BLOCK_RELATIVE_NUMBER;
+
+  console.log(`[DEPLOY] : lastblock.number = ${currentBlock.number}; voting block.number = ${voteBlock}`);
+
   const tokenizedBallotContrat = await tokenizedBallotFactory.deploy(
     convertStringArrayToBytes32(proposals),
     tokenContract.address,
-    BLOCK_NUMBER
+    voteBlock
   ) as TokenizedBallot;
 
   await tokenizedBallotContrat.deployed();
@@ -286,11 +293,17 @@ async function delegate(tokenContractAddress: string, voterWallet : string) {
  */
 async function vote(tokenizedBallotContractAddress: string, proposal : string) {
 
+  const currentBlock = await ethers.provider.getBlock("latest");
+  if(currentBlock.number < voteBlock) {
+    console.log(`[VOTE][ERROR] too early to vote (${currentBlock.number} < ${voteBlock})`);
+  } 
+
   console.log("[VOTE] ballot.attach(" + tokenizedBallotContractAddress + ")");
-  console.log("[VOTE] ballot.vote(" + proposal + ")");
 
   const ballotFactory = new TokenizedBallot__factory(signer);
   let ballotContract = await ballotFactory.attach(tokenizedBallotContractAddress);
+
+  console.log("[VOTE] ballot.vote(" + proposal + ")");
   const tx = await ballotContract.vote(ethers.utils.formatBytes32String(proposal), 5);
   const receipt = await tx.wait();
 
