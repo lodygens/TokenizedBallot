@@ -2,73 +2,79 @@
 
 ln -sf .env.bootcamp .env && yarn run ts-node --files scripts/deployment.ts deploy one two three
 
-[MAIN] : using address 0xB646946b98CB7F662852458A4e39B0439d6Dd815 with balance 563130235547909733 on network 5
-[DEPLOY] : tokenFactory(0xB646946b98CB7F662852458A4e39B0439d6Dd815)
-[DEPLOY] : MyToken deployed at 0x2814507E62dE91cC122CA23A4684E96ef485db59
-[DEPLOY] : TokenizedBallot__factory(0xB646946b98CB7F662852458A4e39B0439d6Dd815)
-[DEPLOY] : TokenizedBallot deployed at 0x8cF9dd674B551d3e1A8aaB381040Fd91e07B262C
-
+ln -sf .env.bootcamp .env && yarn run ts-node --files scripts/deployment.ts deploy one two three
+[MAIN] : using address 0xbd0C50CCd017Df7A1AaA3658C3D6309E85464F5B with balance 812305889579269761 on network 5
+[DEPLOY] : tokenFactory(0xbd0C50CCd017Df7A1AaA3658C3D6309E85464F5B)
+[DEPLOY] : MyToken deployed at 0xd39595e3358477919F7eB4eafF6858CB84d8400A
+[DEPLOY] : TokenizedBallot__factory(0xbd0C50CCd017Df7A1AaA3658C3D6309E85464F5B)
+[DEPLOY] : lastblock.number = 7994518; voting block.number = 7994538
+[DEPLOY] : TokenizedBallot deployed at 0xf009209949855aD2589b807AcdF2cE841Db5Eb84
 
 # Give right to vote to voter1
-ln -sf .env.bootcamp .env && yarn run ts-node --files scripts/deployment.ts giveRightToVote 0x2814507E62dE91cC122CA23A4684E96ef485db59 0x6392c3f68BD1dED8BE5C8654494d81472ab53d9a
+ln -sf .env.bootcamp .env && yarn run ts-node --files scripts/deployment.ts giveRightToVote 0xd39595e3358477919F7eB4eafF6858CB84d8400A 0x6392c3f68BD1dED8BE5C8654494d81472ab53d9a
 
-[MAIN] : using address 0xB646946b98CB7F662852458A4e39B0439d6Dd815 with balance 491377502952537993 on network 5
-[GIVERIGHTTOVOTE] : token.attach(0x2814507E62dE91cC122CA23A4684E96ef485db59)
+[MAIN] : using address 0xbd0C50CCd017Df7A1AaA3658C3D6309E85464F5B with balance 658017701296765709 on network 5
+[GIVERIGHTTOVOTE] : token.attach(0xd39595e3358477919F7eB4eafF6858CB84d8400A)
 [GIVERIGHTTOVOTE] : voterTokenBalance = 10000000000000000000
 [GIVERIGHTTOVOTE] : votePower = 0
-[GIVERIGHTTOVOTE] : Mint Tx hash 0x95853698f958aaca0bbf73a847a65e5a67a269bd1fff0e09c5de542a03b9eecb
-
+[GIVERIGHTTOVOTE] : Mint Tx hash 0xc05c088eec01accce122c6653f9b8576c96a42ed2ed1f32629d6093e34c48f5a
 
 # Give right to vote to voter2
-ln -sf .env.bootcamp .env && yarn run ts-node --files scripts/deployment.ts giveRightToVote 0x2814507E62dE91cC122CA23A4684E96ef485db59 0xB646946b98CB7F662852458A4e39B0439d6Dd815
+ln -sf .env.bootcamp .env && yarn run ts-node --files scripts/deployment.ts giveRightToVote 0xd39595e3358477919F7eB4eafF6858CB84d8400A 0xB646946b98CB7F662852458A4e39B0439d6Dd815
 
-[MAIN] : using address 0xB646946b98CB7F662852458A4e39B0439d6Dd815 with balance 489538247228923632 on network 5
-[GIVERIGHTTOVOTE] : token.attach(0x2814507E62dE91cC122CA23A4684E96ef485db59)
+[MAIN] : using address 0xbd0C50CCd017Df7A1AaA3658C3D6309E85464F5B with balance 653306508443341763 on network 5
+[GIVERIGHTTOVOTE] : token.attach(0xd39595e3358477919F7eB4eafF6858CB84d8400A)
 [GIVERIGHTTOVOTE] : voterTokenBalance = 10000000000000000000
 [GIVERIGHTTOVOTE] : votePower = 0
-[GIVERIGHTTOVOTE] : Mint Tx hash 0x8341d334a3d388ea4b0a4bfd941df7fd2ed7c33a3920ca873ddc549ba802d90b
-
+[GIVERIGHTTOVOTE] : Mint Tx hash 0x23f188a248db16432e86829904e2c69bf5cb8590e4587efcf7c4bdb84ca5d4bb
 
 # Give right to vote to voter3
-ln -sf .env.bootcamp .env && yarn run ts-node --files scripts/deployment.ts giveRightToVote 0x2814507E62dE91cC122CA23A4684E96ef485db59 0xD7Da6dFF289814EEB7EC9b5c11844D1E011216e6
+ln -sf .env.bootcamp .env && yarn run ts-node --files scripts/deployment.ts giveRightToVote 0xd39595e3358477919F7eB4eafF6858CB84d8400A 0xD7Da6dFF289814EEB7EC9b5c11844D1E011216e6
 
-[MAIN] : using address 0xB646946b98CB7F662852458A4e39B0439d6Dd815 with balance 488334604817844616 on network 5
-[GIVERIGHTTOVOTE] : token.attach(0x2814507E62dE91cC122CA23A4684E96ef485db59)
+[MAIN] : using address 0xbd0C50CCd017Df7A1AaA3658C3D6309E85464F5B with balance 648914122276749057 on network 5
+[GIVERIGHTTOVOTE] : token.attach(0xd39595e3358477919F7eB4eafF6858CB84d8400A)
 [GIVERIGHTTOVOTE] : voterTokenBalance = 10000000000000000000
 [GIVERIGHTTOVOTE] : votePower = 0
-[GIVERIGHTTOVOTE] : Mint Tx hash 0x1fcd7245c0fd2cd7180ccfb9002f8e9215720ad4316ddbbbfe3f3421a1c09c1e
+[GIVERIGHTTOVOTE] : Mint Tx hash 0x913513fbe664a3193f25b7ded0d9d4e0ce23fe10b8ba952462c9d4a0256a6101
 
 # Delegate  voter1 to voter2
-ln -sf .env.bootcamp1 .env && yarn run ts-node --files scripts/deployment.ts delegate 0x2814507E62dE91cC122CA23A4684E96ef485db59 0xB646946b98CB7F662852458A4e39B0439d6Dd815
+ln -sf .env.bootcamp1 .env && yarn run ts-node --files scripts/deployment.ts delegate 0xd39595e3358477919F7eB4eafF6858CB84d8400A 0xB646946b98CB7F662852458A4e39B0439d6Dd815
 
-[MAIN] : using address 0x6392c3f68BD1dED8BE5C8654494d81472ab53d9a with balance 997309730601813755 on network 5
-[DELEGATE] : tokenizedBallot.attach(0x2814507E62dE91cC122CA23A4684E96ef485db59)
+[MAIN] : using address 0x6392c3f68BD1dED8BE5C8654494d81472ab53d9a with balance 996197828913634639 on network 5
+[DELEGATE] : tokenizedBallot.attach(0xd39595e3358477919F7eB4eafF6858CB84d8400A)
 [DELEGATE] : delegating to 0xB646946b98CB7F662852458A4e39B0439d6Dd815
 [DELEGATE] : delegated voterTokenBalance = 10000000000000000000
 [DELEGATE] : delegated votePower = 10000000000000000000
-[DELEGATE] : Delegate Tx hash 0x188fe234c58b02447dd1ebd9f01bcd288a13658e529066f7aa6092316e34cdcd
-
+[DELEGATE] : Delegate Tx hash 0x77d5b52cc1902afbffc110b4cd8fc9465d42a6c49fba0c01dc5098ea7894790c
 
 # Delegate  voter2 to itself
-ln -sf .env.bootcamp2 .env && yarn run ts-node --files scripts/deployment.ts delegate 0x2814507E62dE91cC122CA23A4684E96ef485db59 0xB646946b98CB7F662852458A4e39B0439d6Dd815
+ln -sf .env.bootcamp2 .env && yarn run ts-node --files scripts/deployment.ts delegate 0xd39595e3358477919F7eB4eafF6858CB84d8400A 0xB646946b98CB7F662852458A4e39B0439d6Dd815
 
-[MAIN] : using address 0xB646946b98CB7F662852458A4e39B0439d6Dd815 with balance 487171972003636318 on network 5
-[DELEGATE] : tokenizedBallot.attach(0x2814507E62dE91cC122CA23A4684E96ef485db59)
+[MAIN] : using address 0xB646946b98CB7F662852458A4e39B0439d6Dd815 with balance 486028021302641638 on network 5
+[DELEGATE] : tokenizedBallot.attach(0xd39595e3358477919F7eB4eafF6858CB84d8400A)
 [DELEGATE] : delegating to 0xB646946b98CB7F662852458A4e39B0439d6Dd815
 [DELEGATE] : delegated voterTokenBalance = 10000000000000000000
 [DELEGATE] : delegated votePower = 20000000000000000000
-[DELEGATE] : Delegate Tx hash 0x81e412854876287cc990ea72b95a731c0567f76e8773f6275a0f2babd422e6f6
+[DELEGATE] : Delegate Tx hash 0x3536fe550f38ed73c7c7565d2e7c37be7cf54e99335db6ad948f96587c3718eb
 
-Delegate  voter3 to itself
-ln -sf .env.bootcamp3 .env && yarn run ts-node --files scripts/deployment.ts delegate 0x2814507E62dE91cC122CA23A4684E96ef485db59 0xD7Da6dFF289814EEB7EC9b5c11844D1E011216e6
-
-[MAIN] : using address 0xD7Da6dFF289814EEB7EC9b5c11844D1E011216e6 with balance 665665105727859455 on network 5
-[DELEGATE] : tokenizedBallot.attach(0x2814507E62dE91cC122CA23A4684E96ef485db59)
+# Delegate  voter3 to itself
+ln -sf .env.bootcamp3 .env && yarn run ts-node --files scripts/deployment.ts delegate 0xd39595e3358477919F7eB4eafF6858CB84d8400A 0xD7Da6dFF289814EEB7EC9b5c11844D1E011216e6
+[MAIN] : using address 0xD7Da6dFF289814EEB7EC9b5c11844D1E011216e6 with balance 663766412343552159 on network 5
+[DELEGATE] : tokenizedBallot.attach(0xd39595e3358477919F7eB4eafF6858CB84d8400A)
 [DELEGATE] : delegating to 0xD7Da6dFF289814EEB7EC9b5c11844D1E011216e6
 [DELEGATE] : delegated voterTokenBalance = 10000000000000000000
 [DELEGATE] : delegated votePower = 10000000000000000000
-[DELEGATE] : Delegate Tx hash 0x56a06e3aa019fa5334b674a2cabde7df72d0ca4db0950db5f08258feeeb7215c
+[DELEGATE] : Delegate Tx hash 0x2a8c8e54752b77d21137cb48999dd4df2ddda10b46a107c4f75cf8b490edbea3
 
 
 # Voter2 votes 'two'
-ln -sf .env.bootcamp2 .env && yarn run ts-node --files scripts/deployment.ts  vote 0x8cF9dd674B551d3e1A8aaB381040Fd91e07B262C 1
+ln -sf .env.bootcamp2 .env && yarn run ts-node --files scripts/deployment.ts  vote 0xf009209949855aD2589b807AcdF2cE841Db5Eb84 1
+[MAIN] : using address 0xB646946b98CB7F662852458A4e39B0439d6Dd815 with balance 482765036437069574 on network 5
+[VOTE] ballot.attach(0xf009209949855aD2589b807AcdF2cE841Db5Eb84)
+[VOTE] time to vote (7994602 >= 7994538)
+[VOTE] ballot.vote(1)
+/Users/mboleg/dev/github/lodygens/Bootcamp/TokenizedBallot/node_modules/@ethersproject/logger/src.ts/index.ts:269
+        const error: any = new Error(message);
+                           ^
+<ref *1> Error: cannot estimate gas; transaction may fail or may require manual gas limit [ See: https://links.ethers.org/v5-errors-UNPREDICTABLE_GAS_LIMIT ] (error={"reason":"execution reverted: Not enough vote power","code":"UNPREDICTABLE_GAS_LIMIT","method":"estimateGas","transaction":{"from":"0xB646946b98CB7F662852458A4e39B0439d6Dd815","maxPriorityFeePerGas":{"type":"BigNumber","hex":"0x59682f00"},"maxFeePerGas":{"type":"BigNumber","hex":"0x0b9f9c3e4e"},"to":"0xf009209949855aD2589b807AcdF2cE841Db5Eb84","data":...
+

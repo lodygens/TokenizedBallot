@@ -22,7 +22,6 @@ dotenv.config()
   * A global variable
   */
 let signer : Wallet;
-let voteBlock : number;
 
 /**
  * This is note used; this is the example during the session with Matheus
@@ -135,7 +134,7 @@ async function main() {
     delegate(args[3], args[4]);
   }
   else if (commandLineCmd.localeCompare(CMD_VOTE) == 0) {
-    vote(args[3], args[4]);
+    vote(args[3], args[4], args[5]);
   }
   else if (commandLineCmd.localeCompare(CMD_PROPOSALS) == 0) {
     proposals(args[3]);
@@ -201,7 +200,7 @@ async function deploy(proposals: string[]) {
   console.log(`[DEPLOY] : TokenizedBallot__factory(${signer.address})`);
 
   const currentBlock = await provider.getBlock("latest");
-  voteBlock = currentBlock.number + BLOCK_RELATIVE_NUMBER;
+  const voteBlock = currentBlock.number + BLOCK_RELATIVE_NUMBER;
 
   console.log(`[DEPLOY] : lastblock.number = ${currentBlock.number}; voting block.number = ${voteBlock}`);
 
@@ -291,17 +290,22 @@ async function delegate(tokenContractAddress: string, voterWallet : string) {
  * @param tokenizedBallotContractAddress is the address of the tokenied ballot smartcontract
  * @param proposal is the vote itself
  */
-async function vote(tokenizedBallotContractAddress: string, proposal : string) {
-
-  const currentBlock = await ethers.provider.getBlock("latest");
-  if(currentBlock.number < voteBlock) {
-    console.log(`[VOTE][ERROR] too early to vote (${currentBlock.number} < ${voteBlock})`);
-  } 
+async function vote(tokenizedBallotContractAddress: string, proposal : string, targetBlock: string) {
 
   console.log("[VOTE] ballot.attach(" + tokenizedBallotContractAddress + ")");
 
   const ballotFactory = new TokenizedBallot__factory(signer);
   let ballotContract = await ballotFactory.attach(tokenizedBallotContractAddress);
+
+  const provider = new ethers.providers.AlchemyProvider("goerli", process.env.ALCHEMY_API_KEY);
+  const currentBlock = await provider.getBlock("latest");
+
+
+  if(currentBlock.number < parseInt(targetBlock)) {
+    console.log(`[VOTE][ERROR] too early to vote (${currentBlock.number} < ${targetBlock})`);
+  } 
+  console.log(`[VOTE] time to vote (${currentBlock.number} >= ${targetBlock})`);
+
 
   console.log("[VOTE] ballot.vote(" + proposal + ")");
   const tx = await ballotContract.vote(ethers.utils.formatBytes32String(proposal), 5);
