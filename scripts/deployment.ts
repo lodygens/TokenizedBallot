@@ -13,6 +13,7 @@ dotenv.config()
  const CMD_GIVERIGHTTOVOTE = "giveRightToVote";
  const CMD_DELEGATEVOTE = "delegate";
  const CMD_VOTE = "vote";
+ const CMD_VOTEPOWER = "votePower";
  const CMD_WINNER = "winner";
  const CMD_PROPOSALS = "proposals";
  const BLOCK_RELATIVE_NUMBER = 20; // deployBlock + 20 is the block where all voter must have the vote power
@@ -135,6 +136,9 @@ async function main() {
   }
   else if (commandLineCmd.localeCompare(CMD_VOTE) == 0) {
     vote(args[3], args[4], args[5]);
+  }
+  else if (commandLineCmd.localeCompare(CMD_VOTEPOWER) == 0) {
+    votePowerAt(args[3], args[4]);
   }
   else if (commandLineCmd.localeCompare(CMD_PROPOSALS) == 0) {
     proposals(args[3]);
@@ -284,6 +288,17 @@ async function delegate(tokenContractAddress: string, voterWallet : string) {
   console.log("[DELEGATE] : Delegate Tx hash " + delegateReceipt.transactionHash);
 }
 
+/**
+ * This retreives vote power at -the given block
+ * @param tokenizedBallotContractAddress  
+ * @param targetBlock 
+ */
+async function votePowerAt(tokenContractAddress: string, targetBlock: string) {
+  const tokenFactory = new MyToken__factory(signer);
+  let tokenContract = tokenFactory.attach(tokenContractAddress);
+   const votePower = await tokenContract.getPastVotes(signer.address, targetBlock);
+  console.log(`At block ${targetBlock}, ${signer.address} votePower = ${votePower}`);
+}
 
 /**
  * This calls Ballot.vote
@@ -304,10 +319,10 @@ async function vote(tokenizedBallotContractAddress: string, proposal : string, t
   if(currentBlock.number < parseInt(targetBlock)) {
     console.log(`[VOTE][ERROR] too early to vote (${currentBlock.number} < ${targetBlock})`);
   } 
+
   console.log(`[VOTE] time to vote (${currentBlock.number} >= ${targetBlock})`);
-
-
   console.log("[VOTE] ballot.vote(" + proposal + ")");
+
   const tx = await ballotContract.vote(ethers.utils.formatBytes32String(proposal), 5);
   const receipt = await tx.wait();
 
