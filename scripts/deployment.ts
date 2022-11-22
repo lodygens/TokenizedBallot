@@ -135,7 +135,7 @@ async function main() {
     delegate(args[3], args[4]);
   }
   else if (commandLineCmd.localeCompare(CMD_VOTE) == 0) {
-    vote(args[3], args[4], args[5]);
+    vote(args[3], args[4]);
   }
   else if (commandLineCmd.localeCompare(CMD_VOTEPOWER) == 0) {
     votePowerAt(args[3], args[4]);
@@ -293,10 +293,13 @@ async function delegate(tokenContractAddress: string, voterWallet : string) {
  * @param tokenizedBallotContractAddress  
  * @param targetBlock 
  */
-async function votePowerAt(tokenContractAddress: string, targetBlock: string) {
+async function votePowerAt(tokenContractAddress: string, tokenizedBallotContractAddress: string) {
   const tokenFactory = new MyToken__factory(signer);
   let tokenContract = tokenFactory.attach(tokenContractAddress);
-   const votePower = await tokenContract.getPastVotes(signer.address, targetBlock);
+  const ballotFactory = new TokenizedBallot__factory(signer);
+  let ballotContract = await ballotFactory.attach(tokenizedBallotContractAddress);
+  const targetBlock = await ballotContract.targetBlock();
+  const votePower = await tokenContract.getPastVotes(signer.address, targetBlock);
   console.log(`At block ${targetBlock}, ${signer.address} votePower = ${votePower}`);
 }
 
@@ -305,25 +308,24 @@ async function votePowerAt(tokenContractAddress: string, targetBlock: string) {
  * @param tokenizedBallotContractAddress is the address of the tokenied ballot smartcontract
  * @param proposal is the vote itself
  */
-async function vote(tokenizedBallotContractAddress: string, proposal : string, targetBlock: string) {
+async function vote(tokenizedBallotContractAddress: string, proposal : string) {
 
   console.log("[VOTE] ballot.attach(" + tokenizedBallotContractAddress + ")");
 
   const ballotFactory = new TokenizedBallot__factory(signer);
   let ballotContract = await ballotFactory.attach(tokenizedBallotContractAddress);
-
+  const targetBlock = await ballotContract.targetBlock();
   const provider = new ethers.providers.AlchemyProvider("goerli", process.env.ALCHEMY_API_KEY);
   const currentBlock = await provider.getBlock("latest");
 
-
-  if(currentBlock.number < parseInt(targetBlock)) {
+  if(currentBlock.number < Number(targetBlock)) {
     console.log(`[VOTE][ERROR] too early to vote (${currentBlock.number} < ${targetBlock})`);
   } 
 
   console.log(`[VOTE] time to vote (${currentBlock.number} >= ${targetBlock})`);
   console.log("[VOTE] ballot.vote(" + proposal + ")");
 
-  const tx = await ballotContract.vote(ethers.utils.formatBytes32String(proposal), 5);
+  const tx = await ballotContract.vote(proposal, 5);
   const receipt = await tx.wait();
 
   console.log("[VOTE] : Vote Tx hash " + receipt.transactionHash);

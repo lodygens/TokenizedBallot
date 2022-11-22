@@ -92,8 +92,12 @@ TXHASH=`cat ${LOGFILE} | grep "${TOGREP}" | cut -d ' ' -f 6`
 echo "Voter3 delegates to itself Tx hash = ${TXHASH}"
 
 # vote Power
-echo "Vote Power voter1 at block ${BLOCKVOTE}"
-ln -sf .env.bootcamp3 .env && yarn run ts-node --files scripts/deployment.ts  votePower ${TOKENCONTRACTADDR} ${BLOCKVOTE}
+echo "Voter1 :  Power voter at block ${BLOCKVOTE}"
+ln -sf .env.bootcamp1 .env && yarn run ts-node --files scripts/deployment.ts  votePower ${TOKENCONTRACTADDR} ${TOKENIZEDBALLOTCONTRACTADDR}
+echo "Voter2 :  Power voter at block ${BLOCKVOTE}"
+ln -sf .env.bootcamp2 .env && yarn run ts-node --files scripts/deployment.ts  votePower ${TOKENCONTRACTADDR} ${TOKENIZEDBALLOTCONTRACTADDR}
+echo "Voter3 :  Power voter at block ${BLOCKVOTE}"
+ln -sf .env.bootcamp3 .env && yarn run ts-node --files scripts/deployment.ts  votePower ${TOKENCONTRACTADDR} ${TOKENIZEDBALLOTCONTRACTADDR}
 
 # Voter3 votes 'three'
 LOGFILE="run_07_vote_voter3.log"

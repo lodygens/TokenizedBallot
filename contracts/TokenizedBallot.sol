@@ -15,7 +15,7 @@ contract TokenizedBallot {
 
     Proposal[] public proposals;
     MyToken public voteToken;
-    uint256 targetBlock;
+    uint256 public targetBlock;
 
     mapping (address => uint256) votePowerSpent;
 
